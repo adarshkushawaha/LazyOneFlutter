@@ -4,179 +4,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Account - LazyOne</title>
+    <title>Request Account Deletion - LazyOne</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
         }
 
-        .card {
+        .container {
             background: white;
-            padding: 2rem;
+            padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
-            text-align: center;
         }
 
         h1 {
+            color: #2c3e50;
             margin-top: 0;
-            color: #1a1a1a;
+            text-align: center;
         }
 
-        p {
+        .description {
+            margin-bottom: 30px;
+            text-align: center;
             color: #666;
-            margin-bottom: 1.5rem;
         }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 1rem;
-            border: 1px solid #ddd;
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
             border-radius: 6px;
+            margin-bottom: 25px;
+            border: 1px solid #ffeeba;
+            font-size: 0.9em;
+        }
+
+        .action-button {
+            display: block;
+            width: 100%;
+            background-color: #d9534f;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s;
             box-sizing: border-box;
-            font-size: 16px;
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
+        .action-button:hover {
+            background-color: #c9302c;
         }
 
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
+        .manual-instruction {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
         }
 
-        .btn-danger:hover {
-            background-color: #c82333;
+        .email-link {
+            color: #007bff;
+            text-decoration: none;
         }
 
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .error {
-            color: #dc3545;
-            font-size: 14px;
-            margin-bottom: 1rem;
-        }
-
-        .success {
-            color: #28a745;
-            font-size: 14px;
-            margin-bottom: 1rem;
+        .email-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <h1>Delete My Account</h1>
+        <p class="description">We are sorry to see you go. If you wish to delete your LazyOne account and all associated
+            data, please proceed below.</p>
 
-    <div class="card" id="login-card">
-        <h1>LazyOne</h1>
-        <p>Sign in to delete your account</p>
-        <div id="login-error" class="error"></div>
-        <input type="email" id="email" placeholder="Email address">
-        <input type="password" id="password" placeholder="Password">
-        <button class="btn-primary" onclick="signIn()">Sign In</button>
+        <div class="warning">
+            <strong>Warning:</strong> This action is permanent. Deleting your account will remove your profile, chat
+            history, tasks, and all other personal data. This cannot be undone.
+        </div>
+
+        <a href="mailto:support@lazyone.app?subject=Account Deletion Request&body=Please delete my account associated with this email address. I understand this action is permanent."
+            class="action-button">
+            Send Deletion Request Email
+        </a>
+
+        <div class="manual-instruction">
+            <p>Alternatively, you can email us directly at:<br>
+                <a href="mailto:udhabhaw@gmail.com" class="email-link">udhabhaw@gmail.com</a>
+            </p>
+            <p>Please use the subject line "Account Deletion Request" and send the email from the address associated
+                with your account.</p>
+        </div>
     </div>
-
-    <div class="card hidden" id="delete-card">
-        <h1>Delete Account</h1>
-        <p>Are you sure? This will permanently delete your account and all associated data. This action cannot be
-            undone.</p>
-        <div id="delete-error" class="error"></div>
-        <button class="btn-danger" onclick="deleteAccount()">Permanently Delete My Account</button>
-    </div>
-
-    <div class="card hidden" id="success-card">
-        <h1 style="color: #28a745;">Account Deleted</h1>
-        <p>Your account has been successfully deleted. We are sorry to see you go.</p>
-    </div>
-
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-        // TODO: Replace the following with your app's Firebase project configuration
-        // You can find this in the Firebase Console > Project Settings > General > Your apps > Web app
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        window.signIn = async () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('login-error');
-
-            if (!email || !password) {
-                errorDiv.textContent = "Please enter both email and password.";
-                return;
-            }
-
-            try {
-                errorDiv.textContent = "";
-                await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById('login-card').classList.add('hidden');
-                document.getElementById('delete-card').classList.remove('hidden');
-            } catch (error) {
-                errorDiv.textContent = "Login failed: " + error.message;
-            }
-        };
-
-        window.deleteAccount = async () => {
-            const user = auth.currentUser;
-            const errorDiv = document.getElementById('delete-error');
-
-            if (user) {
-                try {
-                    await deleteUser(user);
-                    document.getElementById('delete-card').classList.add('hidden');
-                    document.getElementById('success-card').classList.remove('hidden');
-                } catch (error) {
-                    if (error.code === 'auth/requires-recent-login') {
-                        errorDiv.textContent = "Security check failed. Please refresh the page and sign in again to delete your account.";
-                    } else {
-                        errorDiv.textContent = "Error deleting account: " + error.message;
-                    }
-                }
-            }
-        };
-    </script>
-
 </body>
 
 </html>
